@@ -39,7 +39,8 @@ def process_user_handlers(dp: Dispatcher, user_dict: dict, orders_dict: dict):
         if message.from_user.id in user_dict:
             user_dict[message.from_user.id]['Количество'] = message.text.lstrip('0')
         await dp.bot.send_message(chat_id = message.chat.id, text=f'<b>Количество</b>: {message.text.lstrip("0")} шт.\n'
-                                                                  f'Напишите номер телефона для связи или /cancel для отмены')
+                                                                  f'Напишите номер телефона для связи или\n'
+                                                                  f'/cancel для отмены')
 
     @dp.message_handler(Regexp(r'^8\d{10}$'))
     async def get_phone(message: Message):
@@ -49,30 +50,35 @@ def process_user_handlers(dp: Dispatcher, user_dict: dict, orders_dict: dict):
                                                                   f'Укажите предварительный адрес доставки, улица/дом или /cancel для отмены')
 
 
-    @dp.message_handler(Regexp(r'(\w*)(\D+)\s*\d+\D'))
+    @dp.message_handler(Regexp(r'([\w\W\s]*)\s*\d+.*'))
     async def get_address(message: Message):
         if message.from_user.id in user_dict:
-            user_dict[message.from_user.id]['Адрес'] = message.text[:30]
+            user_dict[message.from_user.id]['Адрес'] = message.text[:50]
 
         order = f"Вид: {user_dict[message.from_user.id]['Наименование']}\n" \
                 f" Количество: {user_dict[message.from_user.id]['Количество']}\n" \
                 f" Телефон: {user_dict[message.from_user.id]['Телефон']}\n" \
                 f" Адрес: {user_dict[message.from_user.id]['Адрес']}\n"
         keyboard = create_replay_keyboard(2, 'Да', 'Нет')
-        await dp.bot.send_message(chat_id = message.chat.id, text=f'<b>Адрес</b>: {message.text[:30]}\n'
-                                                                  f'<b>Подтвердите заказ:</b>\n\n {order}', reply_markup=keyboard)
+        await dp.bot.send_message(chat_id = message.chat.id,
+                                  text=f'<b>Адрес</b>: {message.text[:30]}\n'
+                                       f'<b>Подтвердите заказ:</b>\n\n {order}',
+                                  reply_markup=keyboard)
 
 
     @dp.message_handler(lambda x: x.text == 'Да')
     async def confirm_order(message: Message):
         order_id = str(message.from_user.id) + '_' + message.date.__str__()
         orders_dict[order_id] = user_dict[message.from_user.id]
-        await dp.bot.send_message(chat_id = message.chat.id, text=bot_message['created_order'],  reply_markup=ReplyKeyboardRemove())
+        await dp.bot.send_message(chat_id = message.chat.id, text=bot_message['created_order'],
+                                  reply_markup=ReplyKeyboardRemove())
 
     @dp.message_handler(lambda x: x.text == 'Нет')
     async def cancel_order(message: Message):
-        await dp.bot.send_message(chat_id = message.chat.id, text=bot_message['canceled_order'],  reply_markup=ReplyKeyboardRemove())
+        await dp.bot.send_message(chat_id = message.chat.id, text=bot_message['canceled_order'],
+                                  reply_markup=ReplyKeyboardRemove())
 
     @dp.message_handler()
     async def process_wrong_message(message: Message):
-        await dp.bot.send_message(chat_id = message.chat.id, text=bot_message['wrong_message'],  reply_markup=ReplyKeyboardRemove())
+        await dp.bot.send_message(chat_id = message.chat.id, text=bot_message['wrong_message'],
+                                  reply_markup=ReplyKeyboardRemove())
