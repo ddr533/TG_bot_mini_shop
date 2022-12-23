@@ -15,10 +15,10 @@ async def main():
     admin_id = config.tg_bot.admin_ids
     print('Admin_id', admin_id)
     user_dict = open_dict('users_data.pickle')
-    asyncio.create_task(dump_dict(user_dict, 'users_data.pickle'))
+    asyncio.create_task(dump_dict(user_dict, file_name='users_data.pickle', sleep_time=15))
 
     orders_dict = open_dict('orders_data.pickle')
-    asyncio.create_task(dump_dict(orders_dict, 'orders_data.pickle'))
+    asyncio.create_task(dump_dict(orders_dict, file_name='orders_data.pickle', sleep_time=20))
 
     await set_main_menu(dp)
     process_admin_handlers(dp, orders_dict, admin_id)

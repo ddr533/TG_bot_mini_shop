@@ -50,7 +50,7 @@ def process_user_handlers(dp: Dispatcher, user_dict: dict, orders_dict: dict):
                                                                   f'Укажите предварительный адрес доставки, улица/дом или /cancel для отмены')
 
 
-    @dp.message_handler(Regexp(r'([\w\W\s]*)\s*\d+.*'))
+    @dp.message_handler(Regexp(r'(\w\D+)\s*\d+.*'))
     async def get_address(message: Message):
         if message.from_user.id in user_dict:
             user_dict[message.from_user.id]['Адрес'] = message.text[:50]
