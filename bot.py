@@ -1,5 +1,6 @@
 import asyncio
 from aiogram import Bot, Dispatcher, Router, F
+from aiogram.fsm.storage.memory import MemoryStorage
 
 from config.config import Config, load_config
 from handlers.user_handlers import process_users_router
@@ -16,8 +17,9 @@ orders_dict = open_dict('orders_data.pickle')
 async def main():
     config: Config = load_config()
     admins_id = config.tg_bot.admin_ids
+    storage: MemoryStorage = MemoryStorage()
     bot: Bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
-    dp: Dispatcher = Dispatcher()
+    dp: Dispatcher = Dispatcher(storage=storage)
 
     router_user: Router = Router(name='user_router')
 

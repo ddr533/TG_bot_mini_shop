@@ -7,4 +7,4 @@ def create_replay_keyboard(row_width: int, *args):
     buttons: list[KeyboardButton] = [KeyboardButton(text=text)
                                                for text in args]
     kb_builder.row(*buttons, width=row_width)
-    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+    return kb_builder.as_markup(resize_keyboard=True)
