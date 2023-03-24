@@ -1,7 +1,10 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
+
 
 def create_replay_keyboard(row_width: int, *args):
-    keyboard = ReplyKeyboardMarkup(row_width = row_width, resize_keyboard=True, one_time_keyboard=True)
-    for b in args:
-        keyboard.add(b)
-    return keyboard
+    kb_builder: ReplyKeyboardBuilder = ReplyKeyboardBuilder()
+    buttons: list[KeyboardButton] = [KeyboardButton(text=text)
+                                               for text in args]
+    kb_builder.row(*buttons, width=row_width)
+    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)

@@ -1,14 +1,21 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+
 from lexicon.lexicon import product_buttons
 
+
 def create_inline_kb(row_width: int, *args, **kwargs) -> InlineKeyboardMarkup:
-    inline_kb: InlineKeyboardMarkup = InlineKeyboardMarkup(row_width=row_width)
+    kb_builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
+    buttons: list[InlineKeyboardButton] = []
     if args:
-        [inline_kb.insert(InlineKeyboardButton(
-                            text=product_buttons[button],
-                            callback_data=button)) for button in args]
+        for button in args:
+            buttons.append(InlineKeyboardButton(
+                text=product_buttons[button],
+                callback_data=button))
     if kwargs:
-        [inline_kb.insert(InlineKeyboardButton(
-                            text=text,
-                            callback_data=button)) for button, text in kwargs.items()]
-    return inline_kb
+        for button, text in kwargs.items():
+            buttons.append(InlineKeyboardButton(
+                text=text,
+                callback_data=button))
+    kb_builder.row(*buttons, width=row_width)
+    return kb_builder.as_markup()

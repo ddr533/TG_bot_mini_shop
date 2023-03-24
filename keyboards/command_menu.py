@@ -1,10 +1,10 @@
-from aiogram import Dispatcher, types
+from aiogram import types
+from aiogram import Bot
 
-
-# Функция для настройки кнопки Menu бота
-async def set_main_menu(dp: Dispatcher):
+async def set_main_menu(bot: Bot):
+    """Функция для настройки кнопки Menu бота."""
     main_menu_commands = [
         types.BotCommand(command='/start', description='Сделать новый заказ'),
         types.BotCommand(command='/help', description='Получить справку'),
-        types.BotCommand(command='/cancel', description='Отменить текущий заказ')]
-    await dp.bot.set_my_commands(main_menu_commands)
+        types.BotCommand(command='/cancel', description='Отменить заказ')]
+    await bot.set_my_commands(main_menu_commands)
