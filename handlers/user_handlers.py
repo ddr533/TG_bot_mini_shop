@@ -1,3 +1,6 @@
+import logging
+from logging.handlers import RotatingFileHandler
+
 from aiogram.filters import CommandStart, Command, Text, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, StatesGroup, State
@@ -9,13 +12,22 @@ from keyboards.inline_user_keyboards import create_inline_kb
 from keyboards.replaykeyboard import create_replay_keyboard
 
 
+logger = logging.getLogger(__name__)
+handler = RotatingFileHandler('log/handlers.log', maxBytes=50000000,
+                              backupCount=5, encoding='UTF-8')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger.addHandler(handler)
+handler.setFormatter(formatter)
+
+
 class FSMFillForm(StatesGroup):
     choose_product = State()        # Состояние ожидания выбора продукта
     choose_amount = State()         # Состояние ожидания ввода количества
     put_phone_number = State()      # Состояние ожидания ввода номера телефона
     put_address = State()           # Состояние ожидания ввода вдреса
     confirm = State()               # Состояние ожидания подтверждения заказа
-
 
 
 def process_users_router(router: Router, user_dict: dict, orders_dict: dict):
@@ -32,6 +44,8 @@ def process_users_router(router: Router, user_dict: dict, orders_dict: dict):
                                            'Количество': 0,
                                            'Телефон': None,
                                            'Адрес': None})
+            logger.info('Зарегистрирован новый пользователь')
+
         keyboard = create_inline_kb(1, **product_buttons)
         await message.answer(text=commands_text['/start'],
                              reply_markup=keyboard)
@@ -157,6 +171,7 @@ def process_users_router(router: Router, user_dict: dict, orders_dict: dict):
         await message.answer(
             text=bot_message['created_order'],
             reply_markup=ReplyKeyboardRemove())
+        logger.info('Создан новый заказ')
         await state.clear()
 
     @router.message(StateFilter(FSMFillForm.confirm),
