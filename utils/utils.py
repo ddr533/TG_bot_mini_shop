@@ -4,7 +4,8 @@ import pickle
 from logging.handlers import RotatingFileHandler
 
 logger = logging.getLogger(__name__)
-handler = RotatingFileHandler('log/pickle.log', maxBytes=50000000, backupCount=5,
+handler = RotatingFileHandler('log/pickle.log', maxBytes=50000000,
+                              backupCount=5,
                               encoding='UTF-8')
 formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

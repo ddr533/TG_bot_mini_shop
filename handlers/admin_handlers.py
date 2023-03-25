@@ -1,6 +1,6 @@
+from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
-from aiogram import Router
 
 
 def process_admin_router(router: Router, orders_dict: dict):

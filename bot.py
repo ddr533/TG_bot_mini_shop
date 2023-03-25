@@ -2,16 +2,14 @@ import asyncio
 import logging
 from logging.handlers import RotatingFileHandler
 
-from aiogram import Bot, Dispatcher, Router, F
+from aiogram import Bot, Dispatcher, F, Router
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from config.config import Config, load_config
-from handlers.user_handlers import process_users_router
 from handlers.admin_handlers import process_admin_router
-from utils.utils import open_dict, dump_dict
-
+from handlers.user_handlers import process_users_router
 from keyboards.command_menu import set_main_menu
-
+from utils.utils import dump_dict, open_dict
 
 logging.basicConfig(
     level=logging.DEBUG,

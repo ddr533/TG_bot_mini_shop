@@ -1,5 +1,5 @@
-from aiogram import types
-from aiogram import Bot
+from aiogram import Bot, types
+
 
 async def set_main_menu(bot: Bot):
     """Функция для настройки кнопки Menu бота."""

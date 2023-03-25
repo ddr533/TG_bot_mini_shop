@@ -1,16 +1,15 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
-from aiogram.filters import CommandStart, Command, Text, StateFilter
+from aiogram import F, Router
+from aiogram.filters import Command, CommandStart, StateFilter, Text
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import default_state, StatesGroup, State
-from aiogram.types import Message, CallbackQuery
-from aiogram import Router, F
-from aiogram.types import ReplyKeyboardRemove
-from lexicon.lexicon import product_buttons, commands_text, bot_message
+from aiogram.fsm.state import State, StatesGroup, default_state
+from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
+
 from keyboards.inline_user_keyboards import create_inline_kb
 from keyboards.replaykeyboard import create_replay_keyboard
-
+from lexicon.lexicon import bot_message, commands_text, product_buttons
 
 logger = logging.getLogger(__name__)
 handler = RotatingFileHandler('log/handlers.log', maxBytes=50000000,
@@ -68,7 +67,7 @@ def process_users_router(router: Router, user_dict: dict, orders_dict: dict):
         await state.clear()
 
     @router.message(Command(commands='cancel'), StateFilter(default_state))
-    async def process_cancel_command(message: Message):
+    async def process_cancel_default_command(message: Message):
         """
         Хэндлер срабатывает на команду '/cancel' в дефолтном состоянии.
         Показывает сообщение, что пользователь находится вне процесса заказа.
@@ -83,8 +82,8 @@ def process_users_router(router: Router, user_dict: dict, orders_dict: dict):
         Ожидает нажатия на кнопку с наименованием продукта.
         Переводит бота в состояние ожидания ввода кол-ва.
         """
-        user_dict[callback.from_user.id]['Наименование']\
-                = product_buttons[callback.data]
+        user_dict[callback.from_user.id]['Наименование'] = \
+            product_buttons[callback.data]
         await callback.message.edit_text(
             text=f'Вы выбрали {product_buttons[callback.data]}\n'
                  f'Введите количество до 10 кг.')
@@ -188,7 +187,8 @@ def process_users_router(router: Router, user_dict: dict, orders_dict: dict):
         """Срабатывает на некорректный ввод в состоянии подтверждения."""
         await message.answer(text=bot_message['confirm'])
         keyboard = create_replay_keyboard(2, 'Да', 'Нет')
-        await message.answer(text=bot_message['confirm'], reply_markup=keyboard)
+        await message.answer(text=bot_message['confirm'],
+                             reply_markup=keyboard)
 
     @router.message(StateFilter(default_state))
     async def process_wrong_message(message: Message):
