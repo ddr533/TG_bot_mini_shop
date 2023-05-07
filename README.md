@@ -18,5 +18,5 @@ This project allow to order some cherries, fruit and vegetables by using bot))))
  
  
  ### Authors  
- Andrey D.
+ Andrey A. D.
 
